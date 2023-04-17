@@ -2,10 +2,14 @@ package com.itwillbs.member.action;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.itwillbs.commons.Action;
+import com.itwillbs.commons.ActionForward;
 
 /**
  * 
@@ -25,6 +29,8 @@ public class MemberFrontController extends HttpServlet {
 		
 		// URL: http://localhost:8088/MVC7/anyWords.me 
 		// URI: /MVC7/anyWords.me // > 프로토콜, 포트번호 없음
+		// URL: http://localhost:8088/MVC7/MemberJoin.me
+		// URL: http://localhost:8088/MVC7/index.jsp
 		
 		// 3가지 파트의 동작을 구현할 메서드 !!
 		/**********************************1. 가상주소 계산 ***************************************/
@@ -45,14 +51,67 @@ public class MemberFrontController extends HttpServlet {
 		/**********************************1. 가상주소 계산 ***************************************/
 		
 		/**********************************2. 가상주소 매핑 ***************************************/
+		System.out.println("\n\n");
+		System.out.println("2. 가상주소 매핑 - 시작!");
 		
+		Action action = null;
+		ActionForward forward = null;
+		//회원가입 - ./MemberJoin.me
+		if(command.equals("/MemberJoin.me")) {
+			System.out.println("C: /MemberJoin.me 실행!");
+			System.out.println("C: DB사용 X, view페이지로 이동 O.(패턴 1)");
+			
+			// 페이지 이동 
+			forward = new ActionForward();
+			forward.setPath("./member/insertForm.jsp"); // 목적지
+			forward.setRedirect(false); // 주소가 ~.jsp로 끝나면 잘못된것이다.
+			// 티켓 생성 - 정보저장을 완료한 것으로, 해당 정보를 사용하지 않으면 아직 의미가 없는것!!
+		}// if end
+		//회원가입 - ./MemberJoinAction.me
+		else if(command.equals("/MemberJoinAction.me")) { // 콘솔로그에 출력되는 command와 비교해서 입력하면 된다.
+			System.out.println("C: /MemberJoinAction.me실행!");
+			System.out.println("C: DB사용 O, 페이지로 이동 O.(패턴 2)");
+			// 모델을 사용하여 분리할것 !!
+//			MemberJoinAction joinAction = new MemberJoinAction();
+			action = new MemberJoinAction(); // UPCASTING
+//			joinAction.execute(request, response);
+			//Err! Unhandled exception type Exception > 예외처리!
+			try {
+				forward = action.execute(request, response); // interface를 통한 객체 호출! > 다형성 !
+				// 왜 업캐스팅까지 해가면서 이렇게 ?
+				// >> (나중에 배울개념) 강한결합 !! (책임과 관련됨.)
+				// >> 업캐스팅 > 약한결합 !! > 책임 줄어듬. > 이해가 딱 되지는 않는데, 이렇게 해야한다고 ..
+				// ex) 휴대폰 전원버튼이 고장났다 ! > 전원버튼만 바꾸면 됨.   > 약한결합 > 지향
+				//									> 메인보드를 교체해야한다.> 강한결합
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}// t-c end
+			
+		}// if end
 		
+		System.out.println("2. 가상주소 매핑 - 끝!");
+		System.out.println("\n\n");
 		/**********************************2. 가상주소 매핑 ***************************************/
 		
 		/**********************************3. 가상주소 이동 ***************************************/
+		System.out.println("3. 가상주소 이동 - 시작!");
+		if(forward != null) { // 티켓이 정상적으로 생성 되었을때.
+			// 페이지 이동
+			if(forward.isRedirect()) { // isRedirect가 true 일때
+				System.out.println("C: sendRedirect방식 - "+forward.getPath()+" 로 이동.");
+				response.sendRedirect(forward.getPath());
+			}else {				       // isRedirect가 false 일때
+				System.out.println("C: forward방식 - "+forward.getPath()+" 로 이동.");
+				RequestDispatcher dis = 
+						request.getRequestDispatcher(forward.getPath());
+				dis.forward(request, response);
+			}
+		}// if end
 		
-		
+		System.out.println("3. 가상주소 이동 - 끝!");
 		/**********************************3. 가상주소 이동 ***************************************/
+		System.out.println("doProcess - end (컨트롤러 종료)");
 
 	}// doProcess() method end
 	
@@ -74,6 +133,19 @@ public class MemberFrontController extends HttpServlet {
 	
 
 }// public class end
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
