@@ -14,7 +14,9 @@
 // 해당 프로젝트에서 실행 가능한 유일한 jsp 페이지.
 
 // response.sendRedirect("./itwill.me");
-response.sendRedirect("./MemberJoin.me");
+// response.sendRedirect("./MemberJoin.me");
+// response.sendRedirect("./MemberLogin.me");
+response.sendRedirect("./Main.me");
 %>
 
 </body>

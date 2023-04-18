@@ -72,6 +72,75 @@ public class MemberDAO {
 		
 	}// memberJoin() method end
 	
+	// 로그인 - memberLogin()
+	public int memberLogin(MemberDTO dto) {
+		int result = -1;
+		try {
+			// 1,2 DB 연결
+			con = getCon();
+			// 3 sql쿼리 작성
+			sql = "select pw from itwill_member where id=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, dto.getId( ));
+			// 4 sql쿼리 실행
+			rs = pstmt.executeQuery();
+			// 5 데이터 처리
+			if(rs.next()) {
+				if(dto.getPw().equals(rs.getString("pw"))) {
+					// 비밀번호 체크 > 1 회원
+					result = 1;
+				}else {
+					// 비밀번호 오류 > 0 pw 에러
+					result = 0;
+				} // pwcheck i-e end
+			}else {
+				// 아이디 없음 > -1 비회원
+				result = -1;
+			}// rs check i-e end
+			System.out.println("로그인처리 결과: "+ result);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			closeDB();
+		}// t-c-f end
+		return result;
+	}// memberLogin() method end
+	
+	// 회원정보조회 - getMember()
+	public MemberDTO getMember(String id) {
+		MemberDTO dto = null;
+		try {
+			// 1,2 DB연결
+			con = getCon();
+			// 3. sql쿼리 & pstmt 객체
+			sql = "select * from itwill_member where id=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			// 4. 쿼리 실행
+			rs = pstmt.executeQuery();
+			// 5. 데이터 처리
+			if(rs.next()) {
+				// id가 있을때
+				dto = new MemberDTO();
+				dto.setId(rs.getString("id"));
+				dto.setPw(rs.getString("pw"));
+				dto.setName(rs.getString("name"));
+				dto.setGender(rs.getString("gender"));
+				dto.setAge(rs.getInt("age"));
+				dto.setEmail(rs.getString("email"));
+				dto.setRegdate(rs.getDate("regdate"));
+				
+				System.out.println("DAO: 회원정보 저장 완료!"+dto);
+			}else {
+				// id가 없을때 (else는 없어도 되긴 함~)
+			}// i-e end
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			closeDB();
+		} // t-c-f end
+		return dto;
+	}// getMember() method end
 	
 	
 	

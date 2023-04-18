@@ -29,8 +29,12 @@ public class MemberFrontController extends HttpServlet {
 		
 		// URL: http://localhost:8088/MVC7/anyWords.me 
 		// URI: /MVC7/anyWords.me // > 프로토콜, 포트번호 없음
-		// URL: http://localhost:8088/MVC7/MemberJoin.me
-		// URL: http://localhost:8088/MVC7/index.jsp
+		
+		// address
+		// INDEX: http://localhost:8088/MVC7/index.jsp
+		// 회원가입: http://localhost:8088/MVC7/MemberJoin.me
+		// 로그인: http://localhost:8088/MVC7/MemberLogin.me
+		// 메인: http://localhost:8088/MVC7/Main.me
 		
 		// 3가지 파트의 동작을 구현할 메서드 !!
 		/**********************************1. 가상주소 계산 ***************************************/
@@ -66,14 +70,15 @@ public class MemberFrontController extends HttpServlet {
 			forward.setPath("./member/insertForm.jsp"); // 목적지
 			forward.setRedirect(false); // 주소가 ~.jsp로 끝나면 잘못된것이다.
 			// 티켓 생성 - 정보저장을 완료한 것으로, 해당 정보를 사용하지 않으면 아직 의미가 없는것!!
-		}// if end
+		}// if(./MemberJoin.me) end
+		
 		//회원가입 - ./MemberJoinAction.me
 		else if(command.equals("/MemberJoinAction.me")) { // 콘솔로그에 출력되는 command와 비교해서 입력하면 된다.
 			System.out.println("C: /MemberJoinAction.me실행!");
 			System.out.println("C: DB사용 O, 페이지로 이동 O.(패턴 2)");
 			// 모델을 사용하여 분리할것 !!
 //			MemberJoinAction joinAction = new MemberJoinAction();
-			action = new MemberJoinAction(); // UPCASTING
+			action = new MemberJoinAction(); // UPCASTING // 주소와 같은 액션객체
 //			joinAction.execute(request, response);
 			//Err! Unhandled exception type Exception > 예외처리!
 			try {
@@ -88,8 +93,77 @@ public class MemberFrontController extends HttpServlet {
 				e.printStackTrace();
 			}// t-c end
 			
-		}// if end
+		}// else if(./MemberJoinAction.me) end
 		
+		// 로그인 - ./MemberLogin.me
+		else if(command.equals("/MemberLogin.me")) {
+			System.out.println("C: /MemberLogin.me 호출!");
+			System.out.println("C: DB사용X, view페이지(정보입력 페이지) 이동 !(패턴 1)");
+			
+			// 패턴 1
+			forward = new ActionForward();
+			forward.setPath("./member/loginForm.jsp");
+			forward.setRedirect(false); // 주소가 jsp로 끝나면 안되니까 포워딩 방식으로 이동해야 한다.
+										// 가상주소를 변경하지않고 페이지를 이동하기 위해서 사용.
+		}// else if(./MemberLogin.me) end
+		
+		// 로그인 - ./MemberLoginAction.me
+		else if(command.equals("/MemberLoginAction.me")) {
+			System.out.println("C: /MemberLoginAction.me 호출!");
+			System.out.println("C: DB사용 O, 페이지 이동 !(패턴 2)");
+			
+			// MemberLoginAction() 객체 생성
+			action = new MemberLoginAction(); // UPCASTING
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}// t-c end
+			
+		}// else if(./MemberLoginAction.me) end
+		
+		// 메인페이지 -./Main.me
+		else if(command.equals("/Main.me")) {
+			System.out.println("C: /Main.me 호출");
+			System.out.println("C: DB사용X, view페이지(정보입력 페이지) 이동 !(패턴 1)");
+			
+			forward = new ActionForward();
+			forward.setPath("./member/main.jsp");
+			forward.setRedirect(false);
+		}// else if(./Main.me) end
+		
+		// 로그아웃 - ./MemberLogoutAction.me
+		else if(command.equals("/MemberLogoutAction.me")) {
+			System.out.println("C: /MemberLogoutAction.me 호출");
+			System.out.println("C: DB사용X, view페이지(정보입력 페이지) 이동 !(패턴 2)");
+			//					// > 편의상 DB 사용이라고 했지만, 실제로는 처리를 진행하는(Model,JAVAfile)
+			//						 모든 동작은 패턴 2번을 사용해야 한다 !!
+			
+			// MemberLogoutAction() 객체
+			action = new MemberLogoutAction();
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}// t-c end
+		}// else if(./MemberLogoutAction.me) end
+		
+		// 회원정보조회 - ./MemberInfo.me
+		else if(command.equals("/MemberInfo.me")) {
+			System.out.println("C: /MemberInfo.me 호출");
+			System.out.println("C: DB사용O, view페이지 이동& !출력! !(패턴 3)");
+			
+			//MemberInfoAction() 객체 생성 // 패턴 2번과 동일!, 객체 내부구조가 다르다!
+			action = new MemberInfoAction();
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}// t-c end
+			
+		}// else if(./MemberInfo.me) end
+		
+		////////////////////////////////////////////////////////////////////////////////////////////
 		System.out.println("2. 가상주소 매핑 - 끝!");
 		System.out.println("\n\n");
 		/**********************************2. 가상주소 매핑 ***************************************/
