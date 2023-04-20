@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import com.itwillbs.commons.Action;
 import com.itwillbs.commons.ActionForward;
+import com.itwillbs.commons.JSForward;
 import com.itwillbs.member.db.MemberDAO;
 import com.itwillbs.member.db.MemberDTO;
 
@@ -34,25 +35,14 @@ public class MemberLoginAction implements Action { // 상속받는 이유? reque
 		// 페이지 이동
 		if(result == -1) {
 			// 회원이 아닐때(아이디 오류거나 없음)
-			response.setContentType("text/html; charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			out.print("<script>"); // 여기서부터 HTML코드를 사용 가능하다. // > Servlet로 사용중이기 때문.
-			out.print(" alert('아이디 없음!');");
-			out.print(" history.back();"); // 컨트롤러를 거치지 않고, 뒤로가기 해버린다.
-			out.print("</script>");		  //  >> 컨트롤러에게 컨트롤러를 사용하지 않겠다고 알려야 한다!
-			out.close(); // 자원해제 필수
+			JSForward.alertAndBack(response, "아이디 없음!");
 			
 			return null; // return > 정해진 값을 반환한다 + 함수를 종료한다.
 			// >> 컨트롤러에서는 이동하지 않겠다 !
 		}else if(result == 0) {
 			// 비밀번호 오류
-			response.setContentType("text/html; charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			out.print("<script>"); 
-			out.print(" alert('비밀번호 오류!');");
-			out.print(" history.back();"); 
-			out.print("</script>");		  
-			out.close(); // 자원해제 필수
+			JSForward.alertAndBack(response, "비밀번호 오류!");
+			// 서블릿 + JS 동작으로 이동하는 코드를 JSForward로 옮겨서 모듈화 진행하였음.
 			
 			return null; // return > 정해진 값을 반환한다 + 함수를 종료한다.
 			// >> 컨트롤러에서는 이동하지 않겠다 !

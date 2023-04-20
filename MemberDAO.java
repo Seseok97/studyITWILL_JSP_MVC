@@ -10,6 +10,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+
 // DB와 연결해서 처리하는 모든 동작 수행
 // >> DB를 활용해야하는 모든 동작 > MemberDAO 객체를 생성해야한다!
 public class MemberDAO {
@@ -142,43 +143,80 @@ public class MemberDAO {
 		return dto;
 	}// getMember() method end
 	
+	//회원정보수정 폼페이지 출력을 위한 정보 저장 메서드 - updateMember()
+	public MemberDTO updateMember(String id) {
+		MemberDTO dto = null;
+		try {
+			// 1,2 DB연결
+			con = getCon();
+			// 3. sql쿼리 & pstmt 객체
+			sql = "select * from itwill_member where id=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id);
+			// 4. 쿼리 실행
+			rs = pstmt.executeQuery();
+			// 5. 데이터 처리
+			if(rs.next()) {
+				// id가 있을때
+				dto = new MemberDTO();
+				dto.setId(rs.getString("id"));
+				dto.setPw(rs.getString("pw"));
+				dto.setName(rs.getString("name"));
+				dto.setGender(rs.getString("gender"));
+				dto.setAge(rs.getInt("age"));
+				dto.setEmail(rs.getString("email"));
+				dto.setRegdate(rs.getDate("regdate"));
+				
+				System.out.println("DAO: 회원정보 저장 완료!"+dto);
+			}else {
+				// id가 없을때 (else는 없어도 되긴 함~)
+			}// i-e end
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			closeDB();
+		} // t-c-f end
+		return dto;
+	}// updateMember() method end
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	//회원정보수정 동작을 위한 정보 저장 메서드 - memberUpdate()
+	public int memberUpdate(MemberDTO dto) {
+		int result = -1;
+		try {
+			con = getCon();
+			sql="select pw from itwill_member where id=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, dto.getId()); // PK
+			rs = pstmt.executeQuery();
+			// id(PK)를 통하여 pw 추출
+			if(rs.next()) {
+				if(dto.getPw().equals(rs.getString("pw"))) { // pw 체크
+				sql ="update itwill_member set name=?, age=?, gender=? where id=?";
+					pstmt = con.prepareStatement(sql);
+					pstmt.setString(1, dto.getName());
+					pstmt.setInt(2, dto.getAge());
+					pstmt.setString(3, dto.getGender());
+					pstmt.setString(4, dto.getId());
+					
+					result = pstmt.executeUpdate(); 
+					// 영향을 받은 행의 수를 리턴하기때문에 1을 리턴해야 정상적인 것!!
+					
+					
+				}else{ // 비밀번호가 틀린 경우
+					System.out.println("비밀번호 오류!");
+					result = 0;
+				}// i - e end
+			}else {
+				// 아이디 오류
+			}// rs.next() if end
+			System.out.println("DAO: 회원정보 수정 동작 완료!("+result+")");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			closeDB();
+		} // tcf end
+		return result;
+	}// memberUpdate() method end
+
 	
 }// public class end

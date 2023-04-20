@@ -135,7 +135,7 @@ public class MemberFrontController extends HttpServlet {
 		// 로그아웃 - ./MemberLogoutAction.me
 		else if(command.equals("/MemberLogoutAction.me")) {
 			System.out.println("C: /MemberLogoutAction.me 호출");
-			System.out.println("C: DB사용X, view페이지(정보입력 페이지) 이동 !(패턴 2)");
+			System.out.println("C: DB사용O, view페이지(정보입력 페이지) 이동 !(패턴 2)");
 			//					// > 편의상 DB 사용이라고 했지만, 실제로는 처리를 진행하는(Model,JAVAfile)
 			//						 모든 동작은 패턴 2번을 사용해야 한다 !!
 			
@@ -162,6 +162,37 @@ public class MemberFrontController extends HttpServlet {
 			}// t-c end
 			
 		}// else if(./MemberInfo.me) end
+		
+		// 회원정보 수정 페이지 - ./MemberUpdate.me
+		else if(command.equals("/MemberUpdate.me")) {
+			System.out.println("C: /MemberUpdate.me 호출");
+			System.out.println("C: DB사용O, view페이지 이동& !출력! !(패턴 3)");
+			
+			// MemberUpdateAction() 객체
+			action = new MemberUpdateAction();
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}// t-c end
+			
+		}// else if(./MemberUpdate.me) end
+		
+		// 회원정보 수정 동작 - ./MemberUpdateProAction.me
+		else if(command.equals("/MemberUpdateProAction.me")) {
+			System.out.println("C: /MemberUpdateProAction.me 호출");
+			System.out.println("C: DB사용O, 페이지 이동(패턴 2)");
+			
+			// MemberUpdateProAction() 객체
+			action = new MemberUpdateProAction();
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}// t-c end
+			
+		}// else if(./MemberUpdateProAction.me) end
+		
 		
 		////////////////////////////////////////////////////////////////////////////////////////////
 		System.out.println("2. 가상주소 매핑 - 끝!");
