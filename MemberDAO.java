@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -217,6 +219,100 @@ public class MemberDAO {
 		} // tcf end
 		return result;
 	}// memberUpdate() method end
+	
+	//회원정보삭제 동작을 위한 정보 저장 메서드 - deleteMember()
+	public int deleteMember(String id, String pw) {
+		int result = -1;
+		try {
+			con = getCon();
+			sql="select pw from itwill_member where id=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, id); // PK
+			rs = pstmt.executeQuery();
+			// id(PK)를 통하여 pw 추출
+			if(rs.next()) {
+				if(pw.equals(rs.getString("pw"))) { // pw 체크
+					sql ="delete from itwill_member where id=?";
+					pstmt = con.prepareStatement(sql);
+					pstmt.setString(1, id);
+					
+					result = pstmt.executeUpdate(); 
+					// 영향을 받은 행의 수를 리턴하기때문에 1을 리턴해야 정상적인 것!!
+
+				}else{ // 비밀번호가 틀린 경우
+					System.out.println("비밀번호 오류!");
+					result = 0;
+				}// i - e end
+			}else {
+				// 아이디 오류
+				result = -1;
+			}// rs.next() if end
+			System.out.println("DAO: 회원정보 삭제 동작 완료!("+result+")");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			closeDB();
+		} // tcf end
+		return result;
+	}// deleteMember() method end
+	
+	public List<MemberDTO> getMemberList() {
+		List<MemberDTO> memberList = new ArrayList<MemberDTO>();
+		try {
+			con = getCon();
+			sql = "select * from itwill_member";
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				MemberDTO dto = new MemberDTO();
+				dto.setId(rs.getString("id"));
+				dto.setPw(rs.getString("pw"));
+				dto.setName(rs.getString("name"));
+				dto.setGender(rs.getString("gender"));
+				dto.setAge(rs.getInt("age"));
+				dto.setEmail(rs.getString("email"));
+				dto.setRegdate(rs.getDate("regdate"));
+				
+				memberList.add(dto);
+			}// while end
+			System.out.println(" DAO: 회원목록 조회 성공!");
+			System.out.println(memberList.size()); // memberList를 그냥 갖다가 조회하면 시간이 많이걸리니까 이렇게 확인하는거!
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			closeDB();
+		}//tcf end
+		return memberList;
+	}//getMemberList() method end
+	
 
 	
 }// public class end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

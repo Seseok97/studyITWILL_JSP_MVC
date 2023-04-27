@@ -193,6 +193,43 @@ public class MemberFrontController extends HttpServlet {
 			
 		}// else if(./MemberUpdateProAction.me) end
 		
+		// 회원정보 삭제 , 비밀번호 확인 페이지로 이동.
+		else if(command.equals("/MemberDelete.me")) {
+			System.out.println("C: /MemberDelete.me 호출");
+			System.out.println("C: DB사용X, view페이지(정보입력 페이지) 이동 !(패턴 1)");
+			
+			forward = new ActionForward();
+			forward.setPath("./member/memberDelete.jsp");
+			forward.setRedirect(false);
+		}// else if(./MemberDelete.me) end
+		// 회원정보 삭제 동작 - ./MemberDeleteAction.me
+		else if(command.equals("/MemberDeleteAction.me")) {
+			System.out.println("C: /MemberDeleteAction.me 호출");
+			System.out.println("C: DB사용O, 페이지 이동(패턴 2)");
+			
+			// MemberDeleteAction() 객체
+			action = new MemberDeleteAction();
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}// t-c end
+		}// else if(./MemberDeleteAction.me) end
+		
+		// 회원정보목록(관리자) - ./MemberList.me
+		else if(command.equals("/MemberList.me")) {
+			System.out.println("C: /MemberList.me 호출");
+			System.out.println("C: DB사용O, view페이지 이동& !출력! !(패턴 3)");
+			
+			//MemberListAction() 객체 생성 // 패턴 2번과 동일!, 객체 내부구조가 다르다!
+			action = new MemberListAction();
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}// t-c end
+		}// else if(./MemberList.me) end
+		
 		
 		////////////////////////////////////////////////////////////////////////////////////////////
 		System.out.println("2. 가상주소 매핑 - 끝!");
